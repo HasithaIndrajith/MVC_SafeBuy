@@ -27,7 +27,15 @@
             </div>
         </form>
     </div>
-
+    <div>
+        <form action="addCategory/" method="POST">
+            <label for="category_name">Category Name</label>
+            <input type="text" name="category_name" id="category_name" require>
+            <label for="desciption">Description</label>
+            <textarea name="description" id="description" cols="30" rows="1" require></textarea>
+            <button type="submit" name="addCategory">Add a new Category</button>
+        </form>
+    </div>
     <?php
     foreach ($this->categories as $category) {
         print_r($category);
@@ -35,8 +43,9 @@
 
 
         <div class="card" style="width: 18rem;">
-            <form action="editItems/?category=<?php echo $category['category_name'] ?>&categoryid=<?php echo $category['CategoryId'] ?>" method="POST">
+            <form action="editItems/" method="POST">
                 <div class="card-body">
+                    <?php $_POST["a"]= $category["category_name"] ; ?>
                     <h5 class="card-title"><?php echo $category["category_name"] ?></h5>
                     <p class="card-text"><?php echo $category["Description"] ?></p>
                     <button class="btn btn-primary" type="submit" name="getItem">Edit Item Details</button>
