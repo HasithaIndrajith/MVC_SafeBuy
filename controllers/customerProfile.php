@@ -129,8 +129,25 @@ class CustomerProfile extends Controller
     }
     function placeOrder()
     {
+
         if (isset($_POST["placeOrder"])) {
-            echo "Clicked";
+            $amount = $_GET["amount"];
+            $userID =  $_SESSION["userID"];
+            $paymentMethod = $_POST["paymentMethod"];
+            $cartItems = $this->model->getCartItems($_SESSION['userID']);
+            $isCreated = $this->model->createOrder($userID, $amount, $paymentMethod);
+            if ($isCreated) {
+                $lastorderID = $this->model->getLastOrderID($userID);
+                $this->model->addOrderItems($lastorderID, $cartItems);
+                header("Location:../");
+            }
+            // foreach ($cartItems as $key => $value) {
+            //     print_r($value);
+            //     echo "<br>";
+            //     echo "<br>";
+            //     echo "<br>";
+            //     echo "<br>";
+            // }
         }
     }
 }

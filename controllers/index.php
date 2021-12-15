@@ -9,4 +9,3 @@ class Index extends Controller{
         echo "Hi , i am the index";
     }
 }
-?>

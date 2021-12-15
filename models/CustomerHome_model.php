@@ -26,16 +26,17 @@ class CustomerHome_Model extends Model
     }
     function addItemtoCart($itemID, $quantity)
     {
-        $query = "INSERT INTO CART_ITEMSTEMP (CART_ID,ITEM_ID,QUANTITY) VALUES ('3','" . $itemID . "','" . $quantity . "')";
+        $query = "INSERT INTO CART_ITEMSTEMP (CART_ID,ITEM_ID,QUANTITY,ORDERED) VALUES ('3','" . $itemID . "','" . $quantity . "','0')";
         echo $query;
         return $this->db->insertQuery($query);
     }
 
     function checkAlreadyIn($itemID)
     {
-        $arrayOfItems = $this->db->runQuery("SELECT ITEM_ID FROM CART_ITEMSTEMP");
+        $arrayOfItems = $this->db->runQuery("SELECT ITEM_ID,ORDERED FROM CART_ITEMSTEMP");
         foreach ($arrayOfItems as $key => $value) {
-            if (($value)[0] == $itemID) {
+            
+            if (($value)[0] == $itemID && ($value)[1]==0) {
                 return true;
             }
         }

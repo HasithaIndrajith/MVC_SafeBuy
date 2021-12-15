@@ -1,9 +1,15 @@
 <?php
 class CustomerHome extends Controller
 {
+    private $orderList;
+    private $order;
     function __construct()
     {
         parent::__construct();
+        require "Order.php";
+
+        $this->order = new Order();
+        $this->orderList = $this->order->getOrders();
     }
     function index()
     {
@@ -15,6 +21,15 @@ class CustomerHome extends Controller
         $this->view->categories = $this->getCategories();
         foreach ($this->view->categories as $key => $value) {
             $this->view->categories[$key]["items"] = $this->getItems($this->view->categories[$key][0]);
+        }
+        foreach ($this->orderList as $key => $value) {
+            if ($_SESSION["userID"] == $value["Customer_id"]) {
+                print_r($value);
+                echo "<br>";
+                echo "<br>";
+
+                echo "<br>";
+            }
         }
         $this->view->render('CustomerHome');
     }

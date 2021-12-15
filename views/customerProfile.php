@@ -19,7 +19,7 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <link rel="stylesheet" href="../public/CSS/customer_profile.css">
     <link rel="stylesheet" href="../public/CSS/notify.css">
-
+    <!-- <link rel="stylesheet" href="../public/CSS/CreditCard.css"> -->
 
 
     <title>Customer Account</title>
@@ -407,6 +407,7 @@
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
+                Cart
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -441,7 +442,7 @@
                                         $quantityExceed = false;
                                         foreach ($this->cartItems as $key => $value) {
                                             // // // echo($value["itemDetails"][0][1]);
-                                            // // print_r($value);
+                                            // echo($value[0]);
                                             // echo "<br>";
                                             // echo "<br>";
                                             // echo "<br>";
@@ -470,7 +471,12 @@
                                                         <?php if ($stockQuantity < $requiredQuantity) {
                                                             $quantityExceed = true; ?>
                                                             <script>
-                                                                document.getElementById("quant<?php echo $value["itemDetails"][0][0]; ?>").style.backgroundColor = "red";
+                                                                try {
+                                                                    document.getElementById("quant<?php echo $value["itemDetails"][0][0]; ?>").style.backgroundColor = "red";
+                                                                    document.getElementById("payConButton").className = "btn btn-primary disabled";
+                                                                } catch (err) {
+                                                                    console.log(err);
+                                                                }
                                                             </script>
                                                         <?php  } ?>
                                                     </td>
@@ -499,12 +505,21 @@
                                             </div>
 
                                         <?php
-                                        } else { ?>
+                                        } else if ($sum > 0) { ?>
                                             <div style="color: green;">
 
                                                 You are ready to pay your order.
                                             </div>
-                                        <?php  }
+                                        <?php  } else {
+                                            // echo "<script>document.getElementById('onCashMethod').style.visibility=hidden;</script>";
+                                            // echo "<script>document.getElementById('onCreditMethod').style.visibility=hidden;</script>";
+
+                                            // let methd = document.getElementById("onCashMethod");
+                                            // methd.style.visibility = hidden;
+                                            // let methd2 = document.getElementById("onCreditMethod");
+                                            // methd2.style.visibility = hidden;
+
+                                        }
                                         ?>
 
                                     </tbody>
@@ -515,16 +530,27 @@
                                 </div>
                             </div>
                         </div>
-                        <form action="placeOrder/" method="POST">
+                        <form action="placeOrder/?amount=<?php echo $sum; ?>" method="POST">
                             <div class="row mt-4 d-flex align-items-center">
+                                <div class="form-check" id="onCreditMethod" onclick="OnCreditCard()">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="flexRadioDefault1" value="oncredit" checked>
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Pay by credit card
+                                    </label>
+                                </div>
+                                <div class="form-check" id="onCashMethod" onclick="OnCash()">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="flexRadioDefault2" value="cashOn">
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                        Cash on Dilivery
+                                    </label>
+                                </div>
+
+
                                 <div class="col-sm-6 order-md-2 text-right">
-                                    <?php if ($quantityExceed) { ?>
-                                        <button type="button" class="btn btn-primary disabled" disabled>PlaceOrder</button>
-                                    <?php  } else {
-                                    ?>
-                                        <button type="submit" name="placeOrder" class="btn btn-primary active">PlaceOrder</button>
-                                        <!-- <a href="placeOrder/" class="btn btn-primary active">PlaceOrder</a> -->
-                                    <?php  } ?>
+
+                                    <button id="placeOrderBtn" type="button" name="placeOrder" class="btn btn-primary disabled">PlaceOrder</button>
+
+
                                 </div>
                                 <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
                                     <a href="../customerhome/">
@@ -539,14 +565,131 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
                 </div>
+                <div class="container py-5">
+                    <!-- For demo purpose -->
+                    <div class="row mb-4">
+                        <div class="col-lg-8 mx-auto text-center">
+                            <h1 class="display-6">Payment Forms</h1>
+                            <div style="color: grey;">
+                                You can use credit card payment or cash on delivery method
+                            </div>
+                        </div>
+                    </div> <!-- End -->
+                    <div class="row">
+                        <div class="">
+                            <div class="card ">
+                                <div class="card-header">
+                                    <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
+                                        <!-- Credit card form tabs -->
+                                        <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
+                                            <li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active "> <i class="fas fa-credit-card mr-2"></i> Credit Card </a> </li>
+                                            <li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "> <i class="fab fa-paypal mr-2"></i> Cash On Delivery </a> </li>
+                                        </ul>
+                                    </div> <!-- End -->
+                                    <!-- Credit card form content -->
+                                    <div class="tab-content">
+                                        <!-- credit card info-->
+                                        <div id="credit-card" class="tab-pane fade show active pt-3">
+                                            <form name="payConform" role="form" onsubmit="event.preventDefault()">
+                                                <div class="form-group"> <label for="username">
+                                                        <h6>Card Owner</h6>
+                                                    </label> <input type="text" name="username" placeholder="Card Owner Name" required class="form-control "> </div>
+                                                <div class="form-group"> <label for="cardNumber">
+                                                        <h6>Card number</h6>
+                                                    </label>
+                                                    <div class="input-group"> <input type="text" name="cardNumber" placeholder="Valid card number" class="form-control " required>
+                                                        <div class="input-group-append"> <span class="input-group-text text-muted"> <i class="fab fa-cc-visa mx-1"></i> <i class="fab fa-cc-mastercard mx-1"></i> <i class="fab fa-cc-amex mx-1"></i> </span> </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-8">
+                                                        <div class="form-group"> <label><span class="hidden-xs">
+                                                                    <h6>Expiration Date</h6>
+                                                                </span></label>
+                                                            <div class="input-group"> <input type="number" placeholder="MM" name="expmonth" class="form-control" required>
+                                                                <input type="number" placeholder="YY" name="expyear" class="form-control" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="form-group mb-4"> <label data-toggle="tooltip" title="Three digit CV code on the back of your card">
+                                                                <h6>CVV <i class="fa fa-question-circle d-inline"></i></h6>
+                                                            </label> <input type="text" name="cvv" required class="form-control" require> </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer"> <button id="payConButton" type="submit" class="subscribe btn btn-primary btn-block shadow-sm"> Confirm Payment </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div id="paypal" class="tab-pane fade pt-3">
+                                        <h6 class="pb-2">Cash on Dilivery</h6>
+                                        <p> <button id="cashOnDelveryBtn" type="button" class="btn btn-primary "><i class="fab fa-paypal mr-2"></i> I use cash on Delivery Service</button> </p>
+                                        <p class="text-muted" id="cashOnDeliveryStatus"> If you preffer cash on delivery service please aggree. </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
+
+
+
         </div>
     </div>
-
-
-
-
 </body>
+
+<script>
+    document.getElementById("payConButton").onclick = function() {
+        <?php if ($sum > 0 && !$quantityExceed) { ?>
+            validateDetails();
+        <?php } ?>
+    };
+
+    function validateDetails() {
+
+        let conform = document.forms["payConform"];
+        if (!conform["username"].value == "" && !conform["cardNumber"].value == "" && !conform["cvv"].value == "" && !conform["expmonth"].value == "" && !conform["expyear"].value == "") {
+            let btn = document.getElementById("placeOrderBtn");
+            let cshonBtn = document.getElementById("cashOnDelveryBtn");
+
+            btn.className = "btn btn-primary active";
+            let thisButn = document.getElementById("payConButton");
+            thisButn.className = "btn btn-primary disabled";
+            thisButn.style.color = "black";
+            thisButn.style.backgroundColor = "yellow";
+            btn.type = "submit";
+            thisButn.innerHTML = "<div>Credit card details are already confirmed. <br> You can place your order</div>";
+
+        }
+    }
+</script>
+<script>
+    function OnCash() {
+
+        <?php if ($sum > 0 && !$quantityExceed) { ?>
+            let btn = document.getElementById("placeOrderBtn");
+            btn.type = "submit";
+            btn.className = "btn btn-primary active";
+        <?php } ?>
+    }
+
+    function OnCreditCard() {
+        <?php if ($sum > 0 && !$quantityExceed) { ?>
+            let btn = document.getElementById("placeOrderBtn");
+            btn.type = "button";
+            if (document.getElementById("payConButton").style.backgroundColor != "yellow") {
+                btn.className = "btn btn-primary disabled";
+                btn.type = "button";
+            } else {
+                btn.className = "btn btn-primary active";
+                btn.type = "submit";
+            }
+        <?php } ?>
+    }
+</script>
 <script>
     const selectDrop = document.querySelector('#district');
     let jsVar = '<?= $row["District"] ?>';
@@ -557,17 +700,22 @@
     let output = "";
     let set = false;
     districts.forEach(d => {
-        // console.log(d);
+
         if (d == jsVar && !set) {
             output += `<option>${d}</option>`;
             set = true;
 
         } else if (d != jsVar) {
             output += `<option>${d}</option>`;
-        }
+        };
     });
-    console.log(output);
     selectDrop.innerHTML = output;
 </script>
+<script>
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+
 
 </html>
