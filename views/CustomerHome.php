@@ -1,5 +1,4 @@
-<?php $categories = $this->categories;
-?>
+<?php $categories = $this->categories; ?>
 <html>
 
 <head>
@@ -31,7 +30,18 @@
     <a href="logout/">Log out</a>
     <a href="../customerProfile/">Customer Profile</a>
     <a href="OrderStatusCustomer.php">Orders</a>
-
+    <script>
+        function getQuantity(id) {
+            
+            if(document.getElementById("quant" + id).value==""){
+                alert("Please input the number of quantity");
+                return false;
+            }
+            document.cookie=("quant" + id+"="+document.getElementById("quant" + id).value);
+            console.log(document.cookie);
+            return true;
+        }
+    </script>
 
     <div class="container">
 
@@ -48,19 +58,23 @@
             </div>
             <div class="row" style="width: 100%;">
                 <?php foreach ($items as $key => $value) { ?>
+                    <script>document.cookie="quant<?php echo $value["itemID"] ?>=0"</script>
                     <div class="col" style="border: 1px solid black;">
 
-                        <form action="addItem/?ItemID=<?php echo $value['itemID'] ?>" method="POST" >
+                        <form name="myForm" action="addItem/?ItemID=<?php echo $value['itemID'] ?>&quantity=<?php echo $_COOKIE["quant".$value['itemID']] ?>" method="POST" onsubmit="getQuantity(<?php echo $value['itemID'] ?>)">
                             <img style="width: 20%;  ;margin: 20px; margin-left: auto; margin-right: auto; display: block;" src="data:image/jpeg;charset=utf8;base64,<?php echo base64_encode($value["itemImage"]); ?>" />
                             <h3><?php echo ("Rs : " . $value['price']); ?></h3>
                             <h3><?php echo ($value['description']); ?></h3>
                             <h3><?php echo ("Discount Rs : " . $value['discount']); ?></h3>
                             <h3><?php echo ("Ratings : " . $value['rating']); ?></h3>
                             <h3><?php echo ("Review : " . $value['review']); ?></h3>
-                            <input id="quant" type="number" placeholder="Quantity" require>
-                            
+                            <script>
+                                var i = '<?= $value["itemID"] ?>';
+                            </script>
+                            <input id=<?php echo "quant" . $value["itemID"] ?> type="number" placeholder="Quantity" name="fname" require>
+
                             <?php $status = $value['status'];
-                            
+
                             $state = "";
                             if ($status == 0) {
                                 $state = "In Stock";
@@ -71,13 +85,14 @@
                             }
 
                             ?>
+
                             <h3><?php echo ("Status of the item : " . $state); ?></h3>
                             <button class="btn btn-primary" type="submit" name="add">Add Item to Cart</button>
 
                             <!-- <input class="btn btn-primary" type="submit" name="addItem" value="Add to Cart"> -->
                             <!-- <button class="btn btn-primary" type="submit" name="addItem">Add to cart</button> -->
                         </form>
-                     
+
                     </div>
 
 

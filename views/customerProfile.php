@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php  $row=($this->row)[0];
+<?php $row = ($this->row)[0];
 
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -166,7 +167,7 @@
                 <div class="card-header">Account</div>
                 <div class="row">
                     <div class="col-sm-4">
-                       <form action="saveImage" method="POST" enctype="multipart/form-data">
+                        <form action="saveImage" method="POST" enctype="multipart/form-data">
 
                             <div class="card">
                                 <div class="card-body">
@@ -181,7 +182,7 @@
                             </div>
 
                         </form>
-                        
+
                     </div>
 
                     <div class="modal fade" id="modalEmail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -234,7 +235,7 @@
 
                                     </div>
                                     <div class="modal-footer d-flex justify-content-center">
-                                        <input type="submit" class="btn btn-primary" value="Save Password" name="savePassword" >
+                                        <input type="submit" class="btn btn-primary" value="Save Password" name="savePassword">
                                     </div>
                                 </form>
                             </div>
@@ -248,7 +249,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Security Information</h5>
-                                <a href="" class="btn btn-primary btn-rounded mb-4" data-toggle="modal" data-target="#modalEmail" >Change Email</a>
+                                <a href="" class="btn btn-primary btn-rounded mb-4" data-toggle="modal" data-target="#modalEmail">Change Email</a>
                                 <br><br>
                                 <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalPassword">Change Password</a>
 
@@ -276,7 +277,7 @@
                 <div class="card-header">My Shipping Address</div>
                 <div class="card-body">
 
-                 <form action="saveInfo" method="POST">
+                    <form action="saveInfo" method="POST">
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="name">Name</label>
@@ -284,7 +285,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="username">User Name</label>
-                                
+
                                 <input type="text" class="form-control" id="username" placeholder="User Name" name="username" value="<?php echo $row['Username'] ?>" required>
                             </div>
 
@@ -318,7 +319,7 @@
 
                             <div class="form-group col-md-2">
                                 <label for="inputZip">Zip Code</label>
-                                <input type="text" class="form-control" id="inputZip" name="inputZip" value=" <?php echo $row['Zip_code']?>" required>
+                                <input type="text" class="form-control" id="inputZip" name="inputZip" value=" <?php echo $row['Zip_code'] ?>" required>
                             </div>
 
                         </div>
@@ -333,7 +334,7 @@
                         <button type="submit" class="btn btn-primary" id="save" name="save">Save</button>
                     </form>
                 </div>
-            </div> 
+            </div>
 
 
 
@@ -422,7 +423,7 @@
                             <div class="col-lg-12 col-md-12 col-12">
                                 <h3 class="display-5 mb-2 text-center">Shopping Cart</h3>
                                 <p class="mb-5 text-center">
-                                    <i class="text-info font-weight-bold">1</i> items in your cart
+                                    <i class="text-info font-weight-bold"><?php echo sizeof($this->cartItems) ?></i> items in your cart
                                 </p>
                                 <table id="shoppingCart" class="table table-condensed table-responsive">
                                     <thead>
@@ -434,56 +435,109 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td data-th="Product">
-                                                <div class="row">
-                                                    <div class="col-md-3 text-left">
-                                                        <img src="https://via.placeholder.com/250x250/5fa9f8/ffffff" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
-                                                    </div>
-                                                    <div class="col-md-9 text-left mt-sm-2">
-                                                        <h4>Product Name</h4>
-                                                        <p class="font-weight-light">Brand &amp; Name</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td data-th="Price">$49.00</td>
-                                            <td data-th="Quantity">
-                                                <input type="number" class="form-control form-control-lg text-center" value="1">
-                                            </td>
-                                            <td class="actions" data-th="">
-                                                <div class="text-right">
-                                                    <button class="btn btn-white border-secondary bg-white btn-md mb-2">
-                                                        <i class="fas fa-sync"></i>
-                                                    </button>
-                                                    <button class="btn btn-white border-secondary bg-white btn-md mb-2">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+
+                                        <?php
+                                        $sum = 0;
+                                        $quantityExceed = false;
+                                        foreach ($this->cartItems as $key => $value) {
+                                            // // // echo($value["itemDetails"][0][1]);
+                                            // // print_r($value);
+                                            // echo "<br>";
+                                            // echo "<br>";
+                                            // echo "<br>";
+                                            // echo "<br>";
+                                            $stockQuantity = $value["itemDetails"][0][3];
+                                            $requiredQuantity = $value[3];
+
+
+                                        ?>
+                                            <tr>
+                                                <form action="removeItem/?id=<?php echo $value[0] ?>" method="POST">
+                                                    <td data-th="Product">
+                                                        <div class="row">
+                                                            <div class="col-md-3 text-left">
+                                                                <img src="https://via.placeholder.com/250x250/5fa9f8/ffffff" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
+                                                            </div>
+                                                            <div class="col-md-9 text-left mt-sm-2">
+                                                                <h4> <?php echo ($value["itemDetails"][0][4]); ?></h4>
+                                                                <p class="font-weight-light">Brand &amp; Name</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td data-th="Price"> <?php echo ($value["itemDetails"][0][2]); ?></td>
+                                                    <td data-th="Quantity">
+                                                        <input type="number" id="quant<?php echo $value["itemDetails"][0][0];  ?>" style="width:100px ;" class="form-control form-control-lg text-center" value='<?php echo $value[3]; ?>' readonly>
+                                                        <?php if ($stockQuantity < $requiredQuantity) {
+                                                            $quantityExceed = true; ?>
+                                                            <script>
+                                                                document.getElementById("quant<?php echo $value["itemDetails"][0][0]; ?>").style.backgroundColor = "red";
+                                                            </script>
+                                                        <?php  } ?>
+                                                    </td>
+                                                    <td class="actions" data-th="">
+                                                        <div class="text-right">
+                                                            <button class="btn btn-white border-secondary bg-white btn-md mb-2" value="">
+                                                                <i class="fas fa-sync">Remove Item</i>
+                                                            </button>
+
+                                                        </div>
+                                                    </td>
+                                                </form>
+
+                                            </tr>
+
+                                        <?php
+                                            $sum += ($value["itemDetails"][0][2] * $value[3]);
+                                        }
+                                        ?>
+                                        <?php if ($quantityExceed) { ?>
+
+                                            <div style="color: red;">
+
+                                                Quantity of some items have been exceeded.Please remove the item and add enough quantity
+                                                <a href="../customerhome/">Here</a>
+                                            </div>
+
+                                        <?php
+                                        } else { ?>
+                                            <div style="color: green;">
+
+                                                You are ready to pay your order.
+                                            </div>
+                                        <?php  }
+                                        ?>
+
                                     </tbody>
                                 </table>
                                 <div class="float-right text-right">
                                     <h4>Subtotal:</h4>
-                                    <h1>$99.00</h1>
+                                    <h1>Rs: <?php echo $sum ?>/=</h1>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-4 d-flex align-items-center">
-                            <div class="col-sm-6 order-md-2 text-right">
-                                <a href="catalog.html" class="btn btn-primary mb-4 btn-lg pl-5 pr-5">Checkout</a>
+                        <form action="placeOrder/" method="POST">
+                            <div class="row mt-4 d-flex align-items-center">
+                                <div class="col-sm-6 order-md-2 text-right">
+                                    <?php if ($quantityExceed) { ?>
+                                        <button type="button" class="btn btn-primary disabled" disabled>PlaceOrder</button>
+                                    <?php  } else {
+                                    ?>
+                                        <button type="submit" name="placeOrder" class="btn btn-primary active">PlaceOrder</button>
+                                        <!-- <a href="placeOrder/" class="btn btn-primary active">PlaceOrder</a> -->
+                                    <?php  } ?>
+                                </div>
+                                <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
+                                    <a href="../customerhome/">
+                                        <i class="fas fa-arrow-left mr-2"></i> Continue Shopping</a>
+                                </div>
                             </div>
-                            <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
-                                <a href="catalog.html">
-                                    <i class="fas fa-arrow-left mr-2"></i> Continue Shopping</a>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </section>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+
                 </div>
             </div>
         </div>

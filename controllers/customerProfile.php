@@ -13,6 +13,7 @@ class CustomerProfile extends Controller
             die();
         }
         $this->view->row = $this->model->getData();
+        $this->view->cartItems = $this->model->getCartItems($_SESSION['userID']);
         $this->view->render('CustomerProfile');
     }
     function loadDefault()
@@ -117,5 +118,19 @@ class CustomerProfile extends Controller
             session_destroy();
         }
         header("Location: ../../login/");
+    }
+    function removeItem()
+    {
+        $itemCartID = $_GET["id"];
+        $isdeleted = $this->model->deleteItemCart($itemCartID);
+        if ($isdeleted) {
+            header("Location: ../");
+        }
+    }
+    function placeOrder()
+    {
+        if (isset($_POST["placeOrder"])) {
+            echo "Clicked";
+        }
     }
 }

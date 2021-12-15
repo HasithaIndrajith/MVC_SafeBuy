@@ -39,9 +39,17 @@ class CustomerHome extends Controller
     {
         if (isset($_POST["add"])) {
             $itemID = $_GET['ItemID'];
-            $isadded = $this->model->addItemtoCart($itemID);
+            $quantity = $_COOKIE["quant" . $itemID];
+            $alreadyIn = $this->model->checkAlreadyIn($itemID);
+            $isadded = false;
+            if (!$alreadyIn) {
+                $isadded = $this->model->addItemtoCart($itemID, $quantity);
+            } else {
+
+                $isadded = $this->model->UpdateItemtoCart($itemID, $quantity);
+            }
             if ($isadded) {
-                $this->view->render('CustomerHome');
+                header("Location:../");
             }
         }
     }
